@@ -9,7 +9,7 @@ const CONFIG = {
   venue: 'ต.นำเจริญ เพลย์เฮ้าส์',
   dates: '11–13 กันยายน 2569',
   maxQty: 10,
-  slotCapacity: 50, // ← จำนวนที่นั่งสูงสุดต่อรอบ
+  slotCapacity: 85, // ← จำนวนที่นั่งสูงสุดต่อรอบ
 
   // ⬇️ ใส่ URL ของ Google Apps Script ที่ deploy แล้วตรงนี้
   APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbxDtXXwxwaW6Zh7Kub6O0iSI2_zVDfDzdKOYC_bEEWSd2GnQ3ttXUzd5rK53VHlz9-W/exec',

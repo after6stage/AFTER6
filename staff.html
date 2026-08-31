@@ -715,34 +715,6 @@
   <!-- RESULT -->
   <div id="result-wrap" style="display:none"></div>
 
-  <!-- TICKET SALE SETTINGS -->
-  <div class="card">
-    <div class="card-header">
-      <span class="card-title">⚙️ ตั้งค่าการขายบัตร</span>
-    </div>
-    <div style="padding: 20px; display: flex; flex-direction: column; gap: 16px;">
-      <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;">
-        <div>
-          <h4 style="font-size: 0.95rem; font-weight: 600; margin-bottom: 4px;">ขายบัตร Early Bird</h4>
-          <p style="font-size: 0.8rem; color: var(--muted);">เปิดหรือปิดการขายบัตร Early Bird ในหน้าจองสำหรับลูกค้าทั่วไป</p>
-          <p id="earlybird-status-text" style="font-size: 0.8rem; margin-top: 4px; font-weight: 600;"></p>
-        </div>
-        <label class="switch" style="position: relative; display: inline-block; width: 50px; height: 26px;">
-          <input type="checkbox" id="toggle-earlybird" onchange="toggleEarlyBirdSale(this.checked)" style="opacity: 0; width: 0; height: 0;">
-          <span class="slider" style="position: absolute; cursor: pointer; inset: 0; background-color: rgba(255,255,255,0.06); border: 1.5px solid var(--border); border-radius: 34px; transition: .4s;"></span>
-        </label>
-      </div>
-      <div id="earlybird-push-notice" style="display:none; background: rgba(245,158,11,0.12); border: 1px solid rgba(245,158,11,0.3); border-radius: 12px; padding: 12px 14px; font-size: 0.82rem; color: #fde68a; line-height: 1.6;">
-        ⚠️ เปลี่ยนค่าแล้ว กรุณากดปุ่มด้านล่างเพื่อดาวน์โหลดไฟล์ config.json และนำไปวางทับเดิมในโฟลเดอร์โปรเจกต์ แล้ว git push เพื่อให้ทุกเครื่องแสดงค่าล่าสุด
-        <br><br>
-        <button onclick="downloadConfig()" style="background: rgba(245,158,11,0.2); border: 1px solid rgba(245,158,11,0.5); color: #fde68a; padding: 6px 14px; border-radius: 8px; cursor: pointer; font-size: 0.8rem;">
-          ⬇️ ดาวน์โหลด config.json
-        </button>
-      </div>
-    </div>
-  </div>
-
-
   <!-- QUOTA BOOKING -->
   <div class="card">
     <div class="card-header">
@@ -768,11 +740,7 @@
       <div class="booking-group">
         <label for="sb-type">ประเภทบัตร <span style="color:var(--error)">*</span></label>
         <select id="sb-type" onchange="updateQuotaBookingPrice()">
-          <option value="QT SPON">🎟️ QT SPON (0 บาท)</option>
           <option value="QT FREE">🎟️ QT FREE (0 บาท)</option>
-          <option value="QT DISCOUNT">🎟️ QT DISCOUNT (590 บาท)</option>
-          <option value="บัตรปกติ">🎭 บัตรปกติ (790 บาท)</option>
-          <option value="Early Bird">🐦 Early Bird (590 บาท)</option>
         </select>
       </div>
       <div class="booking-group">
@@ -871,14 +839,11 @@ const TICKET_TYPES = {
 
 // ตารางรอบการแสดง (ต้องตรงกับ app.js)
 const SCHEDULE = [
-  { id:'w1-fri', dateLabel:'ศุกร์ที่ 16 ต.ค. 2569',    slots:['19:00'] },
-  { id:'w1-sat', dateLabel:'เสาร์ที่ 17 ต.ค. 2569',   slots:['14:00','19:00'] },
-  { id:'w1-sun', dateLabel:'อาทิตย์ที่ 18 ต.ค. 2569', slots:['14:00','19:00'] },
-  { id:'w2-fri', dateLabel:'ศุกร์ที่ 23 ต.ค. 2569',    slots:['19:00'] },
-  { id:'w2-sat', dateLabel:'เสาร์ที่ 24 ต.ค. 2569',   slots:['14:00','19:00'] },
-  { id:'w2-sun', dateLabel:'อาทิตย์ที่ 25 ต.ค. 2569', slots:['14:00','19:00'] },
+  { id:'w1-fri', dateLabel:'ศุกร์ที่ 11 ก.ย. 2569',    slots:['19:00'] },
+  { id:'w1-sat', dateLabel:'เสาร์ที่ 12 ก.ย. 2569',   slots:['14:00','19:00'] },
+  { id:'w1-sun', dateLabel:'อาทิตย์ที่ 13 ก.ย. 2569', slots:['14:00','19:00'] },
 ];
-const DEFAULT_CAPACITY = 50;
+const DEFAULT_CAPACITY = 85;
 
 // ═ SLOT HELPERS ═════════════════════════════════════════════════
 function getSlotKey(dateId, slot) { return `${dateId}|${slot}`; }
