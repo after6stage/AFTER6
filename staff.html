@@ -937,7 +937,8 @@ function getSlotKey(dateId, slot) { return `${dateId}|${slot}`; }
 
 function getSlotCapacity(key) {
   const stock = JSON.parse(localStorage.getItem('theater_stock') || '{}');
-  return typeof stock[key] === 'number' ? stock[key] : DEFAULT_CAPACITY;
+  const val = Number(stock[key]);
+  return (!isNaN(val) && val >= 0) ? val : DEFAULT_CAPACITY;
 }
 
 function getStaffSoldCount(dateId, slot) {
@@ -947,6 +948,10 @@ function getStaffSoldCount(dateId, slot) {
     if (t.cancelled) return false;
     if (t.showDateId && t.showSlot) {
       return t.showDateId === dateId && t.showSlot === slot;
+    }
+    const resolved = findSlotByLabel(t.showDate);
+    if (resolved.dateId && resolved.slot) {
+      return resolved.dateId === dateId && resolved.slot === slot;
     }
     return t.showDate === targetLabel;
   }).length;
@@ -1777,7 +1782,10 @@ async function syncAllFromSheets(silent = false) {
           Object.keys(data.settings).forEach(key => {
             if (key.startsWith('capacity|')) {
               const slotKey = key.replace('capacity|', '');
-              stock[slotKey] = Number(data.settings[key]);
+              const parsedVal = parseInt(data.settings[key], 10);
+              if (!isNaN(parsedVal) && parsedVal >= 0) {
+                stock[slotKey] = parsedVal;
+              }
             }
           });
           localStorage.setItem('theater_stock', JSON.stringify(stock));
@@ -2209,6 +2217,7 @@ function renderStockTable() {
       const remClass = isFull ? 'stock-zero' : isLow ? 'stock-low' : 'stock-ok';
       const label = makeShowDateLabel(d.dateLabel, slot);
       const soldOut = isFull ? `<span class="stock-soldout-badge">SOLD OUT</span>` : '';
+      const inputId = `si_${d.id}_${slot.replace(':', '')}`;
 
       rows += `<tr class="${isFull ? 'stock-row-full' : ''}">
         <td class="stock-label">${escHtml(label)}${soldOut}</td>
@@ -2216,11 +2225,11 @@ function renderStockTable() {
         <td class="stock-num stock-sold">${sold}</td>
         <td class="stock-num ${remClass}">${rem}</td>
         <td class="stock-actions">
-          <button class="btn-stock-adj" onclick="adjustCapacity('${escHtml(key)}', -1)">−</button>
-          <input type="number" class="stock-input" id="si-${escHtml(key)}" value="${cap}"
+          <button class="btn-stock-adj" onclick="adjustCapacity('${key}', -1)">−</button>
+          <input type="number" class="stock-input" id="${inputId}" value="${cap}"
                  min="${sold}" max="999"
-                 onchange="setCapacity('${escHtml(key)}', this.value)" />
-          <button class="btn-stock-adj" onclick="adjustCapacity('${escHtml(key)}', 1)">+</button>
+                 onchange="setCapacity('${key}', this.value)" />
+          <button class="btn-stock-adj" onclick="adjustCapacity('${key}', 1)">+</button>
         </td>
       </tr>`;
     });
@@ -2249,29 +2258,22 @@ function renderStockTable() {
 async function adjustCapacity(key, delta) {
   const stock   = JSON.parse(localStorage.getItem('theater_stock') || '{}');
   const current = getSlotCapacity(key);
-  // Cannot go below current sold count
   const [dateId, slot] = key.split('|');
   const minVal  = getStaffSoldCount(dateId, slot);
   const newVal  = Math.max(minVal, current + delta);
-  if (newVal === current) { showToastStaff(`⚠️ ไม่สามารถลด Capacity ต่ำกว่าจำนวนที่ขายไปแล้ว (${minVal})`); return; }
+  
+  if (newVal === current && delta < 0) {
+    showToastStaff(`⚠️ ไม่สามารถลด Capacity ต่ำกว่าจำนวนที่ขายไปแล้ว (${minVal})`);
+    return;
+  }
+  
   stock[key] = newVal;
   localStorage.setItem('theater_stock', JSON.stringify(stock));
   renderStockTable();
   showToastStaff(`✅ เปลี่ยน Capacity เป็น ${newVal}`);
 
-  // ซิงค์การปรับ Capacity ขึ้น Sheets ทันที
-  if (typeof APPS_SCRIPT_URL !== 'undefined' && APPS_SCRIPT_URL && APPS_SCRIPT_URL !== 'YOUR_APPS_SCRIPT_URL_HERE') {
-    try {
-      await fetch(APPS_SCRIPT_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'updateSetting', key: 'capacity|' + key, value: String(newVal) }),
-      });
-    } catch (e) {
-      console.warn('ซิงค์ Capacity ลง Sheets ไม่สำเร็จ:', e);
-    }
-  }
+  // ซิงค์การปรับ Capacity ขึ้น Sheets
+  syncCapacityToSheets(key, newVal);
 }
 
 async function setCapacity(key, val) {
@@ -2284,20 +2286,20 @@ async function setCapacity(key, val) {
   stock[key]   = capped;
   localStorage.setItem('theater_stock', JSON.stringify(stock));
   renderStockTable();
-  showToastStaff(`✅ อัพเดต Stock เรียบร้อย`);
+  showToastStaff(`✅ บันทึก Capacity เป็น ${capped}`);
 
-  // ซิงค์การปรับ Capacity ขึ้น Sheets ทันที
+  // ซิงค์การปรับ Capacity ขึ้น Sheets
+  syncCapacityToSheets(key, capped);
+}
+
+function syncCapacityToSheets(key, val) {
   if (typeof APPS_SCRIPT_URL !== 'undefined' && APPS_SCRIPT_URL && APPS_SCRIPT_URL !== 'YOUR_APPS_SCRIPT_URL_HERE') {
-    try {
-      await fetch(APPS_SCRIPT_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'updateSetting', key: 'capacity|' + key, value: String(capped) }),
-      });
-    } catch (e) {
-      console.warn('ซิงค์ Capacity ลง Sheets ไม่สำเร็จ:', e);
-    }
+    fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'updateSetting', key: 'capacity|' + key, value: String(val) }),
+    }).catch(e => console.warn('ซิงค์ Capacity ลง Sheets ไม่สำเร็จ:', e));
   }
 }
 

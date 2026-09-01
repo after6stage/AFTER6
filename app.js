@@ -49,21 +49,26 @@ async function fetchGlobalConfig() {
       const res = await fetch(`${CONFIG.APPS_SCRIPT_URL}?action=getSettings`);
       if (res.ok) {
         const data = await res.json();
-        if (typeof data.earlybird_enabled === 'boolean') {
-          GLOBAL_EARLYBIRD_ENABLED = data.earlybird_enabled;
+        if (data) {
+          if (typeof data.earlybird_enabled !== 'undefined') {
+            GLOBAL_EARLYBIRD_ENABLED = (data.earlybird_enabled === true || data.earlybird_enabled === 'true');
+          }
           // บันทึกยอดจองกลาง (Central Stock) ลงเครื่องเพื่อใช้คำนวณที่นั่งเหลือจริง
           if (data.soldCounts) {
             localStorage.setItem('theater_sold_counts', JSON.stringify(data.soldCounts));
           }
           // บันทึกค่า Capacity ที่ปรับปรุงจาก Sheets ลงใน localStorage 'theater_stock'
-          const stockOverride = {};
+          const stock = JSON.parse(localStorage.getItem('theater_stock') || '{}');
           Object.keys(data).forEach(key => {
             if (key.startsWith('capacity|')) {
               const slotKey = key.replace('capacity|', '');
-              stockOverride[slotKey] = Number(data[key]);
+              const parsedVal = parseInt(data[key], 10);
+              if (!isNaN(parsedVal) && parsedVal >= 0) {
+                stock[slotKey] = parsedVal;
+              }
             }
           });
-          localStorage.setItem('theater_stock', JSON.stringify(stockOverride));
+          localStorage.setItem('theater_stock', JSON.stringify(stock));
           return;
         }
       }
@@ -116,8 +121,8 @@ function getSlotKey(dateId, slot) {
 function getSlotCapacity(dateId, slot) {
   const stock = JSON.parse(localStorage.getItem('theater_stock') || '{}');
   const key   = getSlotKey(dateId, slot);
-  // If staff has set a capacity, use it; else fall back to CONFIG
-  return (typeof stock[key] === 'number') ? stock[key] : CONFIG.slotCapacity;
+  const val   = Number(stock[key]);
+  return (!isNaN(val) && val >= 0) ? val : CONFIG.slotCapacity;
 }
 
 function getSoldCountForSlot(dateId, slot) {
@@ -128,9 +133,13 @@ function getSoldCountForSlot(dateId, slot) {
   
   // ดึงยอดจองบนเครื่องของลูกค้าเองมาร่วมคำนวณด้วยเพื่อความแม่นยำ
   const localTickets = JSON.parse(localStorage.getItem('theater_tickets') || '{}');
-  const localSold = Object.values(localTickets).filter(t =>
-    t.showDateId === dateId && t.showSlot === slot && !t.cancelled
-  ).length;
+  const localSold = Object.values(localTickets).filter(t => {
+    if (t.cancelled) return false;
+    if (t.showDateId && t.showSlot) {
+      return t.showDateId === dateId && t.showSlot === slot;
+    }
+    return t.showDate === showDateLabel;
+  }).length;
 
   // ใช้ยอดจากส่วนกลาง (Sheets) เป็นหลัก หรือใช้ยอดจากเครื่องหากส่วนกลางยังไม่ได้ประสานข้อมูล
   const centralSold = typeof syncedSold[showDateLabel] === 'number' ? syncedSold[showDateLabel] : 0;
