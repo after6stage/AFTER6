@@ -356,6 +356,15 @@ body::before {
   color: #ff3b30;
   margin-top: 6px;
 }
+.campaign-title a {
+  color: inherit;
+  text-decoration: none;
+  transition: opacity 0.2s ease, text-decoration 0.2s ease;
+}
+.campaign-title a:hover {
+  text-decoration: underline;
+  opacity: 0.85;
+}
 .campaign-title strong {
   font-weight: 700;
 }

@@ -1996,7 +1996,7 @@ function restoreOrder(orderId) {
 // PERMANENTLY DELETE TICKETS / ORDERS (Save Space)
 // ═══════════════════════════════════════════════════════════════
 function deleteTicketPermanently(ticketId) {
-  if (!confirm(`⚠️ คำเตือน: คุณต้องการลบข้อมูลบัตรใบนี้อย่างถาวรใช่หรือไม่?\n${ticketId}\n\n(การดำเนินการนี้จะไม่สามารถย้อนกลับได้ และจะช่วยประหยัดพื้นที่จัดเก็บข้อมูล)`)) return;
+  if (!confirm(`⚠️ คำเตือน: คุณต้องการลบข้อมูลบัตรใบนี้อย่างถาวรใช่หรือไม่?\n${ticketId}\n\n(การดำเนินการนี้จะลบข้อมูลออกจาก Google Sheets อย่างถาวร)`)) return;
 
   const allTickets = JSON.parse(localStorage.getItem('theater_tickets') || '{}');
   const t = allTickets[ticketId];
@@ -2026,7 +2026,10 @@ function deleteTicketPermanently(ticketId) {
     localStorage.setItem('theater_orders', JSON.stringify(orders));
   }
 
-  // 3. Refresh and close/re-open details
+  // 3. Sync permanent deletion to Google Sheets
+  syncAction('deleteTicket', { ticketId, orderId });
+
+  // 4. Refresh and close/re-open details
   allTicketsCache = allTickets;
   updateStats();
   renderStockTable();
@@ -2051,7 +2054,7 @@ function confirmDeleteOrderPermanently() {
   if (!rep) return;
   const name = rep.name || 'ลูกค้า';
   
-  if (!confirm(`🚨🚨 คำเตือนขั้นเด็ดขาด 🚨🚨\n\nคุณกำลังจะลบออร์เดอร์และตั๋วทั้งหมดของ "${name}" อย่างถาวร!\nการกระทำนี้จะลบรูปภาพสลิปและประวัติทั้งหมดของคำสั่งซื้อนี้ออกอย่างสิ้นเชิง เพื่อประหยัดพื้นที่จัดเก็บข้อมูลสูงสุด\n\nต้องการลบถาวรใช่หรือไม่?`)) return;
+  if (!confirm(`🚨🚨 คำเตือนขั้นเด็ดขาด 🚨🚨\n\nคุณกำลังจะลบออร์เดอร์และตั๋วทั้งหมดของ "${name}" อย่างถาวร!\nการกระทำนี้จะลบข้อมูลออกจาก Google Sheets อย่างถาวร\n\nต้องการลบถาวรใช่หรือไม่?`)) return;
   
   deleteOrderPermanently(rep.orderId);
 }
@@ -2071,7 +2074,10 @@ function deleteOrderPermanently(orderId) {
   const filteredOrders = orders.filter(o => o.orderId !== orderId);
   localStorage.setItem('theater_orders', JSON.stringify(filteredOrders));
 
-  // 3. Refresh and close modal
+  // 3. Sync permanent deletion of entire order to Google Sheets
+  syncAction('deleteOrder', { orderId });
+
+  // 4. Refresh and close modal
   allTicketsCache = allTickets;
   updateStats();
   renderStockTable();
