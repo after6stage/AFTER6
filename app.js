@@ -956,6 +956,24 @@ function showToast(msg, type = '') {
 
 // ─── INIT ─────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
+  // Auto-migrate legacy stock values to 80
+  try {
+    const stock = JSON.parse(localStorage.getItem('theater_stock') || '{}');
+    let changed = false;
+    CONFIG.schedule.forEach(d => {
+      d.slots.forEach(slot => {
+        const key = getSlotKey(d.id, slot);
+        if (stock[key] === 85 || stock[key] === 84 || stock[key] === 82 || typeof stock[key] !== 'number') {
+          stock[key] = 80;
+          changed = true;
+        }
+      });
+    });
+    if (changed) {
+      localStorage.setItem('theater_stock', JSON.stringify(stock));
+    }
+  } catch(e){}
+
   // Load global config asynchronously in the background (Non-blocking page load!)
   fetchGlobalConfig().then(() => {
     // If the customer is on the ticket selection step, silently refresh numbers
