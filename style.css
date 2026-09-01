@@ -51,9 +51,9 @@ body::before {
   content: '';
   position: fixed;
   inset: 0;
-  background: #ffffff url('assets/bg.jpg?v=1') no-repeat center center;
+  background: #ffffff url('assets/bg.jpg?v=2') no-repeat center center;
   background-size: cover;
-  opacity: 0.18;
+  opacity: 0.22;
   pointer-events: none;
   z-index: 0;
 }
@@ -70,9 +70,9 @@ body::before {
 .landing-bg {
   position: fixed;
   inset: 0;
-  background: url('assets/bg.jpg?v=1') no-repeat center center;
+  background: url('assets/bg.jpg?v=2') no-repeat center center;
   background-size: cover;
-  opacity: 0.22;
+  opacity: 0.26;
   pointer-events: none;
   z-index: 0;
 }
