@@ -841,44 +841,76 @@ function downloadTicket(idx) {
   if (!ticket || !srcCanvas) return;
 
   const tc  = document.createElement('canvas');
-  tc.width  = 400; tc.height = 500;
+  tc.width  = 400; tc.height = 540;
   const ctx = tc.getContext('2d');
 
-  ctx.fillStyle = '#1a0d2e';
+  // Background: Deep dark / black
+  ctx.fillStyle = '#0f0f11';
   ctx.fillRect(0, 0, tc.width, tc.height);
-  ctx.strokeStyle = '#d4a017';
-  ctx.lineWidth   = 3;
-  ctx.strokeRect(12, 12, tc.width - 24, tc.height - 24);
 
-  ctx.fillStyle  = '#fde68a';
-  ctx.font       = 'bold 18px sans-serif';
+  // Border: Sleek graphite border
+  ctx.strokeStyle = '#27272a';
+  ctx.lineWidth   = 2;
+  ctx.strokeRect(10, 10, tc.width - 20, tc.height - 20);
+
+  // Top Red Accent Line
+  ctx.fillStyle = '#ff3b30';
+  ctx.fillRect(20, 14, tc.width - 40, 3);
+
+  // Header Titles
+  ctx.fillStyle  = '#ffffff';
+  ctx.font       = 'bold 22px sans-serif';
   ctx.textAlign  = 'center';
-  ctx.fillText(CONFIG.showName, tc.width / 2, 56);
-  ctx.fillStyle  = '#c4b5fd';
-  ctx.font       = '12px sans-serif';
-  ctx.fillText(CONFIG.showNameEn, tc.width / 2, 80);
+  ctx.fillText('AFTER 6', tc.width / 2, 52);
 
+  ctx.fillStyle  = '#ff3b30';
+  ctx.font       = 'bold 12px sans-serif';
+  ctx.fillText('มรดก 6 ตุลา', tc.width / 2, 74);
+
+  // QR Code Box (White background card for 100% scan contrast)
   const qrCanvas = srcCanvas.querySelector('canvas');
   if (qrCanvas) {
-    const qrSize = 200;
-    ctx.drawImage(qrCanvas, (tc.width - qrSize) / 2, 100, qrSize, qrSize);
+    const qrSize = 190;
+    const boxPadding = 10;
+    const boxSize = qrSize + boxPadding * 2;
+    const boxX = (tc.width - boxSize) / 2;
+    const boxY = 92;
+
+    ctx.fillStyle = '#ffffff';
+    if (ctx.roundRect) {
+      ctx.beginPath();
+      ctx.roundRect(boxX, boxY, boxSize, boxSize, 12);
+      ctx.fill();
+    } else {
+      ctx.fillRect(boxX, boxY, boxSize, boxSize);
+    }
+
+    ctx.drawImage(qrCanvas, (tc.width - qrSize) / 2, boxY + boxPadding, qrSize, qrSize);
   }
 
+  // Info details
   ctx.fillStyle = '#ffffff';
-  ctx.font      = 'bold 15px sans-serif';
-  ctx.fillText(ticket.name, tc.width / 2, 330);
-  ctx.fillStyle = '#c4b5fd';
+  ctx.font      = 'bold 16px sans-serif';
+  ctx.fillText(ticket.name || '', tc.width / 2, 340);
+
+  ctx.fillStyle = '#d4d4d8';
   ctx.font      = '13px sans-serif';
-  ctx.fillText(`ประเภท: ${ticket.type}`, tc.width / 2, 355);
-  ctx.fillText(`ใบที่ ${ticket.ticketNum} / ${state.currentOrder.qty}`, tc.width / 2, 378);
-  ctx.fillStyle = '#6b7280';
-  ctx.font      = '11px monospace';
-  ctx.fillText(ticket.ticketId, tc.width / 2, 410);
+  ctx.fillText(`ประเภท: ${ticket.type}`, tc.width / 2, 365);
+  ctx.fillText(`ใบที่ ${ticket.ticketNum} / ${state.currentOrder.qty}`, tc.width / 2, 388);
+
   if (ticket.showDate) {
-    ctx.fillStyle = '#d4a017';
-    ctx.font      = 'bold 11px sans-serif';
-    ctx.fillText(ticket.showDate, tc.width / 2, 448);
+    ctx.fillStyle = '#ff453a';
+    ctx.font      = 'bold 13px sans-serif';
+    ctx.fillText(ticket.showDate, tc.width / 2, 416);
   }
+
+  ctx.fillStyle = '#71717a';
+  ctx.font      = '11px monospace';
+  ctx.fillText(ticket.ticketId, tc.width / 2, 444);
+
+  ctx.fillStyle = '#52525b';
+  ctx.font      = '10px sans-serif';
+  ctx.fillText('ต.นำเจริญ เพลย์เฮ้าส์ (MRT บางโพ)', tc.width / 2, 470);
 
   const link    = document.createElement('a');
   link.download = `ticket-${ticket.ticketId}.png`;
