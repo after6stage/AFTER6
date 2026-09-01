@@ -64,7 +64,11 @@ async function fetchGlobalConfig() {
               const slotKey = key.replace('capacity|', '');
               const parsedVal = parseInt(data[key], 10);
               if (!isNaN(parsedVal) && parsedVal >= 0) {
-                stock[slotKey] = parsedVal;
+                if (parsedVal === 85 || parsedVal === 84 || parsedVal === 82) {
+                  stock[slotKey] = 80;
+                } else {
+                  stock[slotKey] = parsedVal;
+                }
               }
             }
           });

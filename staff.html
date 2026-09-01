@@ -1808,7 +1808,11 @@ async function syncAllFromSheets(silent = false) {
               const slotKey = key.replace('capacity|', '');
               const parsedVal = parseInt(data.settings[key], 10);
               if (!isNaN(parsedVal) && parsedVal >= 0) {
-                stock[slotKey] = parsedVal;
+                if (parsedVal === 85 || parsedVal === 84 || parsedVal === 82) {
+                  stock[slotKey] = 80;
+                } else {
+                  stock[slotKey] = parsedVal;
+                }
               }
             }
           });
@@ -2332,6 +2336,10 @@ async function setCapacity(key, val) {
 
 function syncCapacityToSheets(key, val) {
   if (typeof APPS_SCRIPT_URL !== 'undefined' && APPS_SCRIPT_URL && APPS_SCRIPT_URL !== 'YOUR_APPS_SCRIPT_URL_HERE') {
+    // 1. Send via GET (zero CORS/redirect restrictions)
+    fetch(`${APPS_SCRIPT_URL}?action=updateSetting&key=${encodeURIComponent('capacity|' + key)}&value=${encodeURIComponent(String(val))}`)
+      .catch(() => {});
+    // 2. Also send via POST
     fetch(APPS_SCRIPT_URL, {
       method: 'POST',
       mode: 'no-cors',
