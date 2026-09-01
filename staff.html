@@ -1660,15 +1660,21 @@ async function syncAllFromSheets(silent = false) {
             const resolved = findSlotByLabel(t.showDate);
             normalizedTickets[tId] = {
               ...t,
+              phone: cleanThaiPhone(t.phone),
               showDateId: resolved.dateId || t.showDateId || '',
               showSlot: resolved.slot || t.showSlot || '',
             };
           });
         }
 
+        const normalizedOrders = (data.orders || []).map(o => ({
+          ...o,
+          phone: cleanThaiPhone(o.phone)
+        }));
+
         // อัปเดตตั๋วและประวัติสั่งซื้อใน localStorage
         localStorage.setItem('theater_tickets', JSON.stringify(normalizedTickets));
-        localStorage.setItem('theater_orders', JSON.stringify(data.orders || []));
+        localStorage.setItem('theater_orders', JSON.stringify(normalizedOrders));
         
         // อัปเดตสถานะ Early Bird ใน UI
         if (typeof data.earlybird_enabled === 'boolean') {
