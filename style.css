@@ -212,6 +212,17 @@ body::before {
   margin-top: -10px;
 }
 
+.hero-synopsis {
+  margin-top: 14px;
+  margin-bottom: 24px;
+  font-size: 0.98rem;
+  line-height: 1.75;
+  color: #444444;
+  max-width: 540px;
+}
+.synopsis-desktop { display: block; }
+.synopsis-mobile { display: none; }
+
 .hero-meta {
   display: flex;
   flex-direction: column;
@@ -1464,6 +1475,14 @@ body::before {
    RESPONSIVE
    ============================================================ */
 @media (max-width: 900px) {
+  .synopsis-desktop { display: none; }
+  .synopsis-mobile { display: block; }
+  .hero-synopsis {
+    font-size: 0.95rem;
+    line-height: 1.7;
+    margin: 14px auto 24px;
+    text-align: center;
+  }
   .hero {
     grid-template-columns: 1fr;
     padding: 100px 24px 60px;
