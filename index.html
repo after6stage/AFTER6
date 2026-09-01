@@ -12,7 +12,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet" />
   <script src="assets/qrcodejs.min.js"></script>
-  <link rel="stylesheet" href="style.css?v=2.8" />
+  <link rel="stylesheet" href="style.css?v=2.9" />
 </head>
 <body>
 
@@ -37,19 +37,14 @@
 <div id="view-landing" class="view active">
   <div class="landing-bg"></div>
   <header class="site-header">
-    <a href="index.html" class="header-logo">
+    <a href="staff.html" class="header-logo" title="Staff Portal">
       <img src="assets/logo.png?v=2" alt="Thumb Rights x politicle" class="header-logo-img" />
     </a>
     <nav class="header-nav">
-      <a href="#show-info">
-        <span class="nav-full">รายละเอียด</span>
-        <span class="nav-short">ข้อมูล</span>
-      </a>
       <a href="status.html" class="status-nav-link">
-        <span class="nav-full">🎫 ตรวจสอบบัตร</span>
-        <span class="nav-short">🎫 เช็คบัตร</span>
+        <span class="nav-full">🎫 ตรวจสอบสถานะบัตร</span>
+        <span class="nav-short">🎫 เช็คสถานะ</span>
       </a>
-      <a href="staff.html" class="staff-nav-link">🔐 Staff</a>
       <a href="#" onclick="event.preventDefault();goTo('ticket')" class="btn-nav">จองบัตร</a>
     </nav>
   </header>
@@ -84,12 +79,11 @@
   <section id="show-info" class="show-info">
     <div class="container">
       <h2 class="section-title">เกี่ยวกับการแสดง</h2>
+      <div class="campaign-box">
+        <div class="campaign-lead">ละครเวทีเรื่องนี้เป็นส่วนหนึ่งของแคมเปญ</div>
+        <div class="campaign-title"><strong>'ลบมรดกรัฐประหาร 6 ตุลา'</strong></div>
+      </div>
       <div class="info-grid">
-        <div class="info-card">
-          <div class="info-icon">🎭</div>
-          <h3>บทละคร</h3>
-          <p>ละครเวทีเรื่องนี้เป็นส่วนหนึ่งของแคมเปญ 'ลบมรดกรัฐประหาร 6 ตุลา'</p>
-        </div>
         <div class="info-card">
           <div class="info-icon">⏱️</div>
           <h3>ระยะเวลา</h3>
