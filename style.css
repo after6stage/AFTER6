@@ -1509,9 +1509,6 @@ body::before {
     font-size: 0.8rem;
     margin-left: 0;
   }
-  /* Show short nav labels on mobile */
-  .nav-full { display: none; }
-  .nav-short { display: inline; }
 
   /* ── Hero: contained and centered ── */
   .info-card {
