@@ -9,7 +9,7 @@ const CONFIG = {
   venue: 'ต.นำเจริญ เพลย์เฮ้าส์ (MRT บางโพ)',
   dates: 'ศ. 11 – อา. 13 กันยายน 2569',
   maxQty: 10,
-  slotCapacity: 85, // ← จำนวนที่นั่งสูงสุดต่อรอบ
+  slotCapacity: 80, // ← จำนวนที่นั่งสูงสุดต่อรอบ (80 ที่นั่ง)
 
   // ⬇️ ใส่ URL ของ Google Apps Script ที่ deploy แล้วตรงนี้
   APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycby65l6vSPSGGh3tv15edduiRl7JKI7Q3mGXH6c6z9lrXeXowbrRcgQqMTKJeFYaQWcB/exec',
@@ -122,7 +122,10 @@ function getSlotCapacity(dateId, slot) {
   const stock = JSON.parse(localStorage.getItem('theater_stock') || '{}');
   const key   = getSlotKey(dateId, slot);
   const val   = Number(stock[key]);
-  return (!isNaN(val) && val >= 0) ? val : CONFIG.slotCapacity;
+  if (!isNaN(val) && val > 0 && val !== 85) {
+    return val;
+  }
+  return CONFIG.slotCapacity;
 }
 
 function getSoldCountForSlot(dateId, slot) {

@@ -930,7 +930,7 @@ const SCHEDULE = [
   { id:'w1-sat', dateLabel:'เสาร์ที่ 12 ก.ย. 2569',   slots:['14:00','19:00'] },
   { id:'w1-sun', dateLabel:'อาทิตย์ที่ 13 ก.ย. 2569', slots:['14:00','19:00'] },
 ];
-const DEFAULT_CAPACITY = 85;
+const DEFAULT_CAPACITY = 80;
 
 // ═ SLOT HELPERS ═════════════════════════════════════════════════
 function getSlotKey(dateId, slot) { return `${dateId}|${slot}`; }
@@ -938,7 +938,10 @@ function getSlotKey(dateId, slot) { return `${dateId}|${slot}`; }
 function getSlotCapacity(key) {
   const stock = JSON.parse(localStorage.getItem('theater_stock') || '{}');
   const val = Number(stock[key]);
-  return (!isNaN(val) && val >= 0) ? val : DEFAULT_CAPACITY;
+  if (!isNaN(val) && val > 0 && val !== 85) {
+    return val;
+  }
+  return DEFAULT_CAPACITY;
 }
 
 function getStaffSoldCount(dateId, slot) {
