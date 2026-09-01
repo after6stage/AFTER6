@@ -7,7 +7,7 @@ const CONFIG = {
   showName: 'AFTER 6 มรดก 6 ตุลา',
   showNameEn: 'AFTER 6',
   venue: 'ต.นำเจริญ เพลย์เฮ้าส์ (MRT บางโพ)',
-  dates: '11–13 กันยายน 2569',
+  dates: 'ศ. 11 – อา. 13 กันยายน 2569',
   maxQty: 10,
   slotCapacity: 85, // ← จำนวนที่นั่งสูงสุดต่อรอบ
 

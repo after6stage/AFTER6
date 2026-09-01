@@ -55,9 +55,9 @@
         <p>เหล่านักกฎหมายกลุ่มหนึ่ง จึงมารวมตัวกัน<br/>เพื่อหาทางแก้ไขและลบมรดกบาปในวันนั้น</p>
       </div>
       <div class="hero-meta">
-        <div class="meta-item">📅 11–13 กันยายน 2569</div>
+        <div class="meta-item">📅 ศ. 11 – อา. 13 กันยายน 2569</div>
         <div class="meta-item">🕖 ศ. 19:00 ส. อา. 14:00 และ 19:00</div>
-        <div class="meta-item"><a href="https://share.google/6EpSIyxMeR2USmFIp" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: none;">📍 ต.นำเจริญ เพลย์เฮ้าส์ (MRT บางโพ)</a></div>
+        <div class="meta-item"><a href="https://maps.app.goo.gl/1uwMp8sGH6Jfh2RcA" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: none;">📍 ต.นำเจริญ เพลย์เฮ้าส์ (MRT บางโพ)</a></div>
       </div>
       <button id="btn-buy-hero" class="btn-primary btn-lg" onclick="goTo('ticket')">
         <span>🎫 จองบัตร</span>
@@ -88,7 +88,7 @@
         <div class="info-card">
           <div class="info-icon">📍</div>
           <h3>สถานที่</h3>
-          <p><a href="https://share.google/6EpSIyxMeR2USmFIp" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: underline;">ต.นำเจริญ เพลย์เฮ้าส์<br/>(MRT บางโพ)</a></p>
+          <p><a href="https://maps.app.goo.gl/1uwMp8sGH6Jfh2RcA" target="_blank" rel="noopener noreferrer" style="color: inherit; text-decoration: underline;">ต.นำเจริญ เพลย์เฮ้าส์<br/>(MRT บางโพ)</a></p>
         </div>
       </div>
       <div class="cta-bottom">
@@ -249,19 +249,19 @@
     <form id="customer-form" class="customer-form" onsubmit="submitOrder(event)">
       <div class="form-group">
         <label for="f-name">ชื่อ–นามสกุล <span class="required">*</span></label>
-        <input type="text" id="f-name" placeholder="เช่น สมชาย ใจดี" required />
+        <input type="text" id="f-name" required />
       </div>
       <div class="form-group">
         <label for="f-phone">เบอร์โทรศัพท์ <span class="required">*</span></label>
-        <input type="tel" id="f-phone" placeholder="0812345678" pattern="[0-9]{9,10}" required />
+        <input type="tel" id="f-phone" pattern="[0-9]{9,10}" required />
       </div>
       <div class="form-group">
         <label for="f-email">อีเมล (ไม่บังคับ)</label>
-        <input type="email" id="f-email" placeholder="example@email.com" />
+        <input type="email" id="f-email" />
       </div>
       <div class="form-group">
         <label for="f-note">หมายเหตุเพิ่มเติม</label>
-        <textarea id="f-note" placeholder="" rows="3"></textarea>
+        <textarea id="f-note" rows="3"></textarea>
       </div>
 
       <!-- Slip Upload -->
