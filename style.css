@@ -311,9 +311,9 @@ body::before {
 }
 .poster-glow {
   position: absolute;
-  inset: -20px;
-  background: radial-gradient(ellipse, rgba(155, 93, 229, 0.4) 0%, transparent 70%);
-  filter: blur(30px);
+  inset: -15px;
+  background: radial-gradient(ellipse, rgba(0, 0, 0, 0.5) 0%, transparent 70%);
+  filter: blur(25px);
   z-index: 0;
 }
 .poster-img {
@@ -322,7 +322,7 @@ body::before {
   width: 100%;
   max-width: 460px;
   border-radius: var(--radius-lg);
-  box-shadow: 0 30px 80px rgba(0,0,0,0.6), 0 0 0 1px var(--glass-border);
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.75), 0 10px 25px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(0, 0, 0, 0.15);
   animation: float 6s ease-in-out infinite;
 }
 
@@ -987,8 +987,8 @@ body::before {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  background: rgba(155, 93, 229, 0.08);
-  border: 1px solid rgba(155, 93, 229, 0.25);
+  background: rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(0, 0, 0, 0.15);
   color: var(--text-secondary);
   font-family: 'Sarabun', sans-serif;
   font-size: 0.78rem;
@@ -999,9 +999,9 @@ body::before {
   transition: var(--transition);
 }
 .btn-recap-edit:hover {
-  background: rgba(155, 93, 229, 0.2);
-  border-color: var(--purple-400);
-  color: var(--white);
+  background: rgba(255, 59, 48, 0.1);
+  border-color: #ff3b30;
+  color: #ff3b30;
   transform: translateY(-1px);
 }
 .btn-recap-edit:active { transform: scale(0.96); }
