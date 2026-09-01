@@ -448,6 +448,7 @@ async function doSearch() {
   }
 
   let matchedOrderIds = new Set();
+  let cloudSearched = false;
 
   // พยายามดึงข้อมูลจาก Sheets แบบ Real-time ตลอดเวลาหากมีการเชื่อมต่อคลาวด์ เพื่อความสอดคล้องสูงสุดข้ามอุปกรณ์
   if (typeof APPS_SCRIPT_URL !== 'undefined' && APPS_SCRIPT_URL && APPS_SCRIPT_URL !== 'YOUR_APPS_SCRIPT_URL_HERE') {
@@ -455,18 +456,26 @@ async function doSearch() {
       const res = await fetch(`${APPS_SCRIPT_URL}?action=searchOrder&query=${encodeURIComponent(query)}&type=${currentTab}`);
       if (res.ok) {
         const data = await res.json();
-        if (data.success && data.orders && data.orders.length > 0) {
-          // บันทึกแคชตั๋วรายใบ
-          Object.assign(allTickets, data.tickets);
-          localStorage.setItem('theater_tickets', JSON.stringify(allTickets));
+        if (data.success) {
+          cloudSearched = true;
+          if (data.orders && data.orders.length > 0) {
+            // บันทึกแคชตั๋วรายใบ
+            Object.assign(allTickets, data.tickets);
+            localStorage.setItem('theater_tickets', JSON.stringify(allTickets));
 
-          // บันทึกแคชคำสั่งซื้อ
-          data.orders.forEach(newO => {
-            const idx = allOrders.findIndex(o => o.orderId === newO.orderId);
-            if (idx >= 0) allOrders[idx] = newO;
-            else allOrders.push(newO);
-          });
-          localStorage.setItem('theater_orders', JSON.stringify(allOrders));
+            // บันทึกแคชคำสั่งซื้อ
+            data.orders.forEach(newO => {
+              const idx = allOrders.findIndex(o => o.orderId === newO.orderId);
+              if (idx >= 0) allOrders[idx] = newO;
+              else allOrders.push(newO);
+            });
+            localStorage.setItem('theater_orders', JSON.stringify(allOrders));
+
+            matchedOrderIds = new Set(data.orders.map(o => o.orderId));
+          } else {
+            // บน Google Sheets ไม่พบข้อมูลนี้แล้ว (ถูกลบออกแล้ว)
+            matchedOrderIds = new Set();
+          }
         }
       }
     } catch (e) {
@@ -474,8 +483,10 @@ async function doSearch() {
     }
   }
 
-  // ค้นหาในโลคัลแคชหลังดึงข้อมูล (หรือเมื่อการเชื่อมต่อล้มเหลว)
-  matchedOrderIds = findLocalMatchedIds();
+  // หากออฟไลน์หรือไม่สามารถติดต่อคลาวด์ได้ ให้ค้นหาในแคชเครื่องแทน
+  if (!cloudSearched) {
+    matchedOrderIds = findLocalMatchedIds();
+  }
 
   if (matchedOrderIds.size === 0) {
     resultEl.innerHTML = `
