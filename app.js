@@ -6,7 +6,7 @@
 const CONFIG = {
   showName: 'AFTER 6 มรดก 6 ตุลา',
   showNameEn: 'AFTER 6',
-  venue: 'ต.นำเจริญ เพลย์เฮ้าส์',
+  venue: 'ต.นำเจริญ เพลย์เฮ้าส์ [MRT บางโพ]',
   dates: '11–13 กันยายน 2569',
   maxQty: 10,
   slotCapacity: 85, // ← จำนวนที่นั่งสูงสุดต่อรอบ
@@ -954,15 +954,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Poster
   const posterEl = document.getElementById('poster-img');
-  if (window.POSTER_BASE64) {
-    posterEl.src = window.POSTER_BASE64.startsWith('data:') ? window.POSTER_BASE64 : 'data:image/png;base64,' + window.POSTER_BASE64;
-  } else {
-    posterEl.src = 'assets/poster.png';
+  if (posterEl) {
+    posterEl.src = 'assets/poster.jpg?v=3';
     posterEl.onerror = () => {
-      posterEl.style.display = 'none';
-      const wrap = posterEl.parentElement;
-      wrap.style.cssText = 'background:linear-gradient(135deg,#111111,#000000,#ff3b30);border-radius:24px;min-height:400px;display:flex;align-items:center;justify-content:center';
-      wrap.innerHTML += '<div style="font-size:5rem;opacity:.4">🎭</div>';
+      posterEl.src = 'assets/poster.png?v=3';
     };
   }
 
