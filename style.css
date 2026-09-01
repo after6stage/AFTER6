@@ -40,16 +40,28 @@ html { scroll-behavior: smooth; }
 
 body {
   font-family: 'Sarabun', sans-serif;
-  background: var(--purple-900);
+  background-color: #ffffff;
   color: var(--text-primary);
   min-height: 100vh;
   overflow-x: hidden;
+  position: relative;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: #ffffff url('assets/bg.jpg?v=1') no-repeat center center;
+  background-size: cover;
+  opacity: 0.18;
+  pointer-events: none;
+  z-index: 0;
 }
 
 /* ============================================================
    VIEWS
    ============================================================ */
-.view { display: none; min-height: 100vh; overflow-x: hidden; width: 100%; }
+.view { display: none; min-height: 100vh; overflow-x: hidden; width: 100%; position: relative; z-index: 1; }
 .view.active { display: block; }
 
 /* ============================================================
@@ -58,7 +70,9 @@ body {
 .landing-bg {
   position: fixed;
   inset: 0;
-  background: #ffffff;
+  background: url('assets/bg.jpg?v=1') no-repeat center center;
+  background-size: cover;
+  opacity: 0.22;
   pointer-events: none;
   z-index: 0;
 }
@@ -272,7 +286,8 @@ body {
   position: relative;
   z-index: 1;
   padding: 80px 40px;
-  background: #ffffff;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
 }
 
 .container { max-width: 1100px; margin: 0 auto; }
