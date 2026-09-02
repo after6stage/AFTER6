@@ -373,9 +373,9 @@ body::before {
 
 .info-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 24px;
-  max-width: 680px;
+  max-width: 960px;
   margin: 0 auto 48px;
 }
 
@@ -383,18 +383,18 @@ body::before {
   background: var(--glass);
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-lg);
-  padding: 32px 24px;
+  padding: 32px 20px;
   text-align: center;
   backdrop-filter: blur(10px);
   transition: var(--transition);
 }
 .info-card:hover {
   transform: translateY(-4px);
-  border-color: var(--purple-400);
-  box-shadow: var(--shadow-glow);
+  border-color: rgba(255, 59, 48, 0.4);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
 }
 .info-icon { font-size: 2.5rem; margin-bottom: 16px; }
-.info-card h3 { font-size: 1.1rem; font-weight: 600; margin-bottom: 12px; color: var(--gold-300); }
+.info-card h3 { font-size: 1.1rem; font-weight: 600; margin-bottom: 12px; color: var(--text-primary); }
 .info-card p { color: var(--text-secondary); line-height: 1.7; font-size: 0.95rem; }
 
 .cta-bottom { text-align: center; }
