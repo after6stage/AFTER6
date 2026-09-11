@@ -64,8 +64,8 @@ async function fetchGlobalConfig() {
               const slotKey = key.replace('capacity|', '');
               const parsedVal = parseInt(data[key], 10);
               if (!isNaN(parsedVal) && parsedVal >= 0) {
-                if (parsedVal === 85 || parsedVal === 84 || parsedVal === 82) {
-                  stock[slotKey] = 80;
+                if (parsedVal === 85) {
+                  stock[slotKey] = getSlotDefaultCapacity(slotKey);
                 } else {
                   stock[slotKey] = parsedVal;
                 }
@@ -122,6 +122,10 @@ function getSlotKey(dateId, slot) {
   return `${dateId}|${slot}`;
 }
 
+function getSlotDefaultCapacity(key) {
+  return (key === 'w1-fri|19:00') ? 82 : 80;
+}
+
 function getSlotCapacity(dateId, slot) {
   const stock = JSON.parse(localStorage.getItem('theater_stock') || '{}');
   const key   = getSlotKey(dateId, slot);
@@ -129,7 +133,7 @@ function getSlotCapacity(dateId, slot) {
   if (!isNaN(val) && val > 0 && val !== 85) {
     return val;
   }
-  return CONFIG.slotCapacity;
+  return getSlotDefaultCapacity(key);
 }
 
 function getSoldCountForSlot(dateId, slot) {
@@ -992,15 +996,16 @@ function showToast(msg, type = '') {
 
 // ─── INIT ─────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
-  // Auto-migrate legacy stock values to 80
+  // Auto-migrate legacy stock values
   try {
     const stock = JSON.parse(localStorage.getItem('theater_stock') || '{}');
     let changed = false;
     CONFIG.schedule.forEach(d => {
       d.slots.forEach(slot => {
         const key = getSlotKey(d.id, slot);
-        if (stock[key] === 85 || stock[key] === 84 || stock[key] === 82 || typeof stock[key] !== 'number') {
-          stock[key] = 80;
+        const defaultVal = getSlotDefaultCapacity(key);
+        if (stock[key] === 85 || typeof stock[key] !== 'number' || (key === 'w1-fri|19:00' && stock[key] === 80)) {
+          stock[key] = defaultVal;
           changed = true;
         }
       });
