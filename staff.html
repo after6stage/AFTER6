@@ -863,7 +863,7 @@
     <div class="card-header">
       <span class="card-title">📦 จัดการ Stock บัตรแต่ละรอบ</span>
       <div style="display:flex;gap:8px">
-        <button class="btn btn-check" onclick="resetAllCapacityTo80()" style="font-size:0.78rem;padding:5px 12px;background:rgba(34,197,94,0.12);border-color:rgba(34,197,94,0.3);color:#86efac;">⚡ ตั้งทุกรอบเป็น 80 ที่</button>
+        <button class="btn btn-check" onclick="resetAllCapacityToDefault()" style="font-size:0.78rem;padding:5px 12px;background:rgba(34,197,94,0.12);border-color:rgba(34,197,94,0.3);color:#86efac;">⚡ ตั้งรอบแรก 82 ที่ (รอบอื่น 80 ที่)</button>
         <button class="btn btn-check" onclick="renderStockTable()" style="font-size:0.78rem;padding:5px 12px;">🔄 รีเฟรช</button>
       </div>
     </div>
@@ -942,13 +942,20 @@ function getSlotDefaultCapacity(key) {
   return (key === 'w1-fri|19:00') ? 82 : 80;
 }
 
+function sanitizeCapacityValue(slotKey, rawVal) {
+  const num = parseInt(rawVal, 10);
+  if (isNaN(num) || num <= 0) return getSlotDefaultCapacity(slotKey);
+  // ล้างค่าตกค้างเดิมจากการทดสอบ:
+  if (slotKey === 'w1-sat|19:00' && (num === 84 || num === 85)) return 80;
+  if (slotKey === 'w1-sun|19:00' && (num === 82 || num === 85)) return 80;
+  if (slotKey === 'w1-fri|19:00' && (num === 80 || num === 85)) return 82;
+  if (num === 85) return getSlotDefaultCapacity(slotKey);
+  return num;
+}
+
 function getSlotCapacity(key) {
   const stock = JSON.parse(localStorage.getItem('theater_stock') || '{}');
-  const val = Number(stock[key]);
-  if (!isNaN(val) && val > 0 && val !== 85) {
-    return val;
-  }
-  return getSlotDefaultCapacity(key);
+  return sanitizeCapacityValue(key, stock[key]);
 }
 
 function getStaffSoldCount(dateId, slot) {
@@ -1067,9 +1074,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     SCHEDULE.forEach(d => {
       d.slots.forEach(slot => {
         const key = getSlotKey(d.id, slot);
-        const defaultVal = getSlotDefaultCapacity(key);
-        if (stock[key] === 85 || typeof stock[key] !== 'number' || (key === 'w1-fri|19:00' && stock[key] === 80)) {
-          stock[key] = defaultVal;
+        const sanitized = sanitizeCapacityValue(key, stock[key]);
+        if (stock[key] !== sanitized) {
+          stock[key] = sanitized;
           changed = true;
         }
       });
@@ -1811,14 +1818,7 @@ async function syncAllFromSheets(silent = false) {
           Object.keys(data.settings).forEach(key => {
             if (key.startsWith('capacity|')) {
               const slotKey = key.replace('capacity|', '');
-              const parsedVal = parseInt(data.settings[key], 10);
-              if (!isNaN(parsedVal) && parsedVal >= 0) {
-                if (parsedVal === 85) {
-                  stock[slotKey] = getSlotDefaultCapacity(slotKey);
-                } else {
-                  stock[slotKey] = parsedVal;
-                }
-              }
+              stock[slotKey] = sanitizeCapacityValue(slotKey, data.settings[key]);
             }
           });
           localStorage.setItem('theater_stock', JSON.stringify(stock));

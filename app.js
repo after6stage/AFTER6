@@ -62,14 +62,7 @@ async function fetchGlobalConfig() {
           Object.keys(data).forEach(key => {
             if (key.startsWith('capacity|')) {
               const slotKey = key.replace('capacity|', '');
-              const parsedVal = parseInt(data[key], 10);
-              if (!isNaN(parsedVal) && parsedVal >= 0) {
-                if (parsedVal === 85) {
-                  stock[slotKey] = getSlotDefaultCapacity(slotKey);
-                } else {
-                  stock[slotKey] = parsedVal;
-                }
-              }
+              stock[slotKey] = sanitizeCapacityValue(slotKey, data[key]);
             }
           });
           localStorage.setItem('theater_stock', JSON.stringify(stock));
@@ -126,14 +119,21 @@ function getSlotDefaultCapacity(key) {
   return (key === 'w1-fri|19:00') ? 82 : 80;
 }
 
+function sanitizeCapacityValue(slotKey, rawVal) {
+  const num = parseInt(rawVal, 10);
+  if (isNaN(num) || num <= 0) return getSlotDefaultCapacity(slotKey);
+  // ล้างค่าตกค้างเดิมจากการทดสอบ:
+  if (slotKey === 'w1-sat|19:00' && (num === 84 || num === 85)) return 80;
+  if (slotKey === 'w1-sun|19:00' && (num === 82 || num === 85)) return 80;
+  if (slotKey === 'w1-fri|19:00' && (num === 80 || num === 85)) return 82;
+  if (num === 85) return getSlotDefaultCapacity(slotKey);
+  return num;
+}
+
 function getSlotCapacity(dateId, slot) {
   const stock = JSON.parse(localStorage.getItem('theater_stock') || '{}');
   const key   = getSlotKey(dateId, slot);
-  const val   = Number(stock[key]);
-  if (!isNaN(val) && val > 0 && val !== 85) {
-    return val;
-  }
-  return getSlotDefaultCapacity(key);
+  return sanitizeCapacityValue(key, stock[key]);
 }
 
 function getSoldCountForSlot(dateId, slot) {
@@ -1003,9 +1003,9 @@ document.addEventListener('DOMContentLoaded', () => {
     CONFIG.schedule.forEach(d => {
       d.slots.forEach(slot => {
         const key = getSlotKey(d.id, slot);
-        const defaultVal = getSlotDefaultCapacity(key);
-        if (stock[key] === 85 || typeof stock[key] !== 'number' || (key === 'w1-fri|19:00' && stock[key] === 80)) {
-          stock[key] = defaultVal;
+        const sanitized = sanitizeCapacityValue(key, stock[key]);
+        if (stock[key] !== sanitized) {
+          stock[key] = sanitized;
           changed = true;
         }
       });
