@@ -116,7 +116,7 @@ function getSlotKey(dateId, slot) {
 }
 
 function getSlotDefaultCapacity(key) {
-  return (key === 'w1-fri|19:00') ? 82 : 80;
+  return (key === 'w1-fri|19:00') ? 83 : 80;
 }
 
 function sanitizeCapacityValue(slotKey, rawVal) {
@@ -125,7 +125,7 @@ function sanitizeCapacityValue(slotKey, rawVal) {
   // ล้างค่าตกค้างเดิมจากการทดสอบ:
   if (slotKey === 'w1-sat|19:00' && (num === 84 || num === 85)) return 80;
   if (slotKey === 'w1-sun|19:00' && (num === 82 || num === 85)) return 80;
-  if (slotKey === 'w1-fri|19:00' && (num === 80 || num === 85)) return 82;
+  if (slotKey === 'w1-fri|19:00' && (num === 80 || num === 82 || num === 85)) return 83;
   if (num === 85) return getSlotDefaultCapacity(slotKey);
   return num;
 }
